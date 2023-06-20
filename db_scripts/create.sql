@@ -1,6 +1,6 @@
-create database mygame;
+create database mydb;
 
-use mygame;
+use mydb;
 
 create table user (
     usr_id int not null auto_increment,
@@ -13,7 +13,14 @@ create table game (
     gm_id int not null auto_increment,
     gm_turn int not null default 1,
     gm_state_id int not null,
+    gm_trump_id int not null,
     primary key (gm_id));
+
+create table cards(
+	crd_id int not null auto_increment,
+    crd_value int not null,
+    crd_img varchar(255),
+    primary key (crd_id));
 
 create table game_state (
     gst_id int not null auto_increment,
@@ -52,6 +59,10 @@ create table scoreboard (
 alter table game add constraint game_fk_match_state
             foreign key (gm_state_id) references game_state(gst_id) 
 			ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+alter table game add constraint game_fk_card
+			foreign key (gm_trump_id) references cards(crd_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 alter table user_game add constraint user_game_fk_user
             foreign key (ug_user_id) references user(usr_id) 

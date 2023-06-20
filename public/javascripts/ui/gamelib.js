@@ -34,7 +34,9 @@ async function setup() {
 
 
     GameInfo.prepareUI();
-    
+    HandInfo.cards.push(new CardInfo())
+    HandInfo.cards.push(new CardInfo())
+    HandInfo.cards.push(new CardInfo())
 
     GameInfo.loading = false;
 }
@@ -51,9 +53,11 @@ function draw() {
     } else  {
         GameInfo.scoreBoard.draw();
     }
+
+    HandInfo.draw()
 }
 
 async function mouseClicked() {
+    HandInfo.processclick()
   
 }
-
