@@ -1,6 +1,6 @@
-create database mydb;
+create database mygame;
 
-use mydb;
+use mygame;
 
 create table user (
     usr_id int not null auto_increment,
@@ -13,13 +13,32 @@ create table game (
     gm_id int not null auto_increment,
     gm_turn int not null default 1,
     gm_state_id int not null,
-    gm_trump_id int not null,
     primary key (gm_id));
+
+create table hand (
+	hnd_id int not null auto_increment,
+    hnd_usr int,
+    hnd_gm int not null,
+    primary key (hnd_id));
+
+create table hand_cards (
+	hc_id int not null auto_increment,
+    hc_hand_id int not null,
+    hc_card_id int not null,
+    primary key (hc_id));
+    
+create table turns (
+	turn_id int not null auto_increment,
+	gm_id int not null,
+    crd_id int not null,
+    usr_id int not null,
+    primary key (turn_id));
 
 create table cards(
 	crd_id int not null auto_increment,
+	crd_type varchar(60) not null,
     crd_value int not null,
-    crd_img varchar(255),
+    crd_img varchar(255) not null,
     primary key (crd_id));
 
 create table game_state (
@@ -56,13 +75,29 @@ create table scoreboard (
 
 # Foreign Keys
 
+alter table hand_cards add constraint hand_fk_hand_cards_id
+			foreign key (hc_hand_id) references hand(hand_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+alter table hand add constraint hand_fk_hnd_usr
+			foreign key (hnd_usr) references user(usr_id)
+			ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+alter table turns add constraint turns_fk_gm_id
+			foreign key (gm_id) references game(gm_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+alter table turns add constraint turns_fk_user_id
+			foreign key (usr_id) references user(usr_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            
+alter table turns add constraint turns_fk_crd_id
+			foreign key (crd_id) references cards(crd_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
 alter table game add constraint game_fk_match_state
             foreign key (gm_state_id) references game_state(gst_id) 
 			ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-alter table game add constraint game_fk_card
-			foreign key (gm_trump_id) references cards(crd_id)
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 alter table user_game add constraint user_game_fk_user
             foreign key (ug_user_id) references user(usr_id) 
@@ -82,4 +117,4 @@ alter table scoreboard add constraint scoreboard_fk_user_game
 
 alter table scoreboard add constraint scoreboard_fk_scoreboard_state
             foreign key (sb_state_id) references scoreboard_state(sbs_id) 
-			ON DELETE NO ACTION ON UPDATE NO ACTION;  
+			ON DELETE NO ACTION ON UPDATE NO ACTION;

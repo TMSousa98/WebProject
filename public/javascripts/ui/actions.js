@@ -18,11 +18,15 @@ async function getGameInfo() {
 
 
 async function endturnAction() {
-    let result = await requestEndTurn();
-    if (result.successful) {
-        await  getGameInfo();
-        GameInfo.prepareUI();
-    } else alert("Something went wrong when ending the turn.")
+    if (HandInfo.selectedCard != null) {
+        let result = await requestEndTurn(HandInfo.selectedCard.cardid);
+        if (result.successful) {
+            await  getGameInfo();
+            GameInfo.prepareUI();
+        } else alert("Something went wrong when ending the turn.")
+    
+        HandInfo.selectedCard = null;
+    }
 }
 
 async function closeScore() {

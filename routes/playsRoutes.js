@@ -4,7 +4,7 @@ const Play = require("../models/playsModel");
 const auth = require("../middleware/auth");
 
 // End the turn
-router.patch('/endturn', auth.verifyAuth, async function (req, res, next) {
+router.patch('/endturn/:cardId', auth.verifyAuth, async function (req, res, next) {
     try {
         console.log("Play End Turn");
         if (!req.game) {
@@ -15,7 +15,7 @@ router.patch('/endturn', auth.verifyAuth, async function (req, res, next) {
             res.status(400).send({msg: 
                 "You cannot end turn since you are not currently on your turn"});
         }else {
-            let result = await Play.endTurn(req.game);
+            let result = await Play.endTurn(req.game,parseInt(req.params.cardId));
             res.status(result.status).send(result.result);
         }
     } catch (err) {

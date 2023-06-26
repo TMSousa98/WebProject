@@ -28,13 +28,30 @@ class Play {
             await pool.query(`Update game set gm_state_id=? where gm_id = ?`, [2, game.id]);
 
             // ---- Specific rules for each game start bellow
-
+            this.populateCards(p1Id,p2Id,game)
         } catch (err) {
             console.log(err);
             return { status: 500, result: err };
         }
     }
 
+    static async populateCards(p1,p2,game) {
+        await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?,?)",[null,game.id],async function(err, result, fields) {
+            if (err) throw err;
+            
+            console.log(result.insertId);
+            await pool.query("SELECT * FROM cards",function(err, result, fields){
+                let cards = result;
+                console.log(cards);
+               //await pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?,?)",[result.insertId,cards[i].crd_id])
+
+                
+            });
+
+
+          });
+        
+    }
 
     // This considers that only one player plays at each moment, 
     // so ending my turn starts the other players turn
@@ -42,7 +59,7 @@ class Play {
     // - The user is authenticated
     // - The user has a game running
     // NOTE: This might be the place to check for victory, but it depends on the game
-    static async endTurn(game) {
+    static async endTurn(game,crd_id) {
         try {
             // Change player state to waiting (1)
             await pool.query(`Update user_game set ug_state_id=? where ug_id = ?`,
@@ -63,11 +80,20 @@ class Play {
                 }
             }
 
+            this.finishTurn(game,crd_id)
+
+
             return { status: 200, result: { msg: "Your turn ended." } };
         } catch (err) {
             console.log(err);
             return { status: 500, result: err };
         }
+    }
+
+    static async finishTurn(game,cardPlayed) {
+        console.log(game.player.id)
+        await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,(game.player.userId)]);
+
     }
 
     // Makes all the calculation needed to end and score the game

@@ -1,7 +1,7 @@
 // Actions
-async function requestEndTurn() {
+async function requestEndTurn(crd_id) {
     try {
-        const response = await fetch(`/api/plays/endturn`, 
+        const response = await fetch(`/api/plays/endturn/`+crd_id, 
         {
             headers: {
                 'Accept': 'application/json',

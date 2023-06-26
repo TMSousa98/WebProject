@@ -4,7 +4,9 @@ const State = require("./statesModel");
 // For now it is only an auxiliary class to hold data in here 
 // so no need to create a model file for it
 class Player {
+    userId = 0
     constructor(id,name,state,order) {
+
         this.id = id;        
         this.name = name;
         this.state= state;
@@ -41,6 +43,7 @@ class Game {
     // No verifications, we assume they were already made
     // This is mostly an auxiliary method
     static async fillPlayersOfGame(userId,game) {
+        console.log(userId)
         try {
             let [dbPlayers] = await pool.query(`Select * from user 
             inner join user_game on ug_user_id = usr_id
@@ -49,6 +52,8 @@ class Game {
             for (let dbPlayer of dbPlayers) {
                 let player = new Player(dbPlayer.ug_id,dbPlayer.usr_name,
                             new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order);
+
+                            player.userId = userId;
                 if (dbPlayer.usr_id == userId) game.player = player;
                 else game.opponents.push(player);
             }

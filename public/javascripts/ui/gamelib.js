@@ -15,6 +15,12 @@ async function refresh() {
 function preload() {
 
 }
+function createCard(id,imgLink) {
+    crd = new CardInfo();
+    crd.cardid = id
+    crd.loadAsset(imgLink);
+    return crd;
+}
 
 
 async function setup() {
@@ -34,9 +40,9 @@ async function setup() {
 
 
     GameInfo.prepareUI();
-    HandInfo.cards.push(new CardInfo())
-    HandInfo.cards.push(new CardInfo())
-    HandInfo.cards.push(new CardInfo())
+    HandInfo.cards.push(createCard(1,"images/nebula.png"))
+    HandInfo.cards.push(createCard(2,"images/solar.jpg"))
+    HandInfo.cards.push(createCard(3,"images/stardust.png"))
 
     GameInfo.loading = false;
 }

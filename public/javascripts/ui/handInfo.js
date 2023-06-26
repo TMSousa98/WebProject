@@ -3,6 +3,8 @@ class HandInfo{
     static cards = [];
     static deck = undefined;
 
+    static selectedCard = null;
+
     static draw() {
 
         if (this.cards != undefined) {
@@ -23,7 +25,7 @@ class HandInfo{
                 let cardHeight = CardInfo.cardheight + y;
 
                 if (mouseX >= x && mouseY >= y && mouseX <= cardWidth && mouseY <= cardHeight) {
-                    this.cards[i].clickcard()
+                    this.selectedCard = this.cards[i];
                 }
             }
         }
