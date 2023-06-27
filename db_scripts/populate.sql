@@ -20,5 +20,7 @@ insert into scoreboard_state (sbs_state) values ('Won');
 insert into cards (crd_type, crd_value, crd_img) values ('Solar', 2 , 'images/solar.jpg'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Nebula', 2 , 'images/nebula.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Stardust', 2 , 'images/stardust.png'); 
-
+insert into cards (crd_type, crd_value, crd_img) values ('Solar3', 3 , 'images/solar3.jpg'); 
+insert into cards (crd_type, crd_value, crd_img) values ('Nebula3', 3 , 'images/nebula3.png'); 
+insert into cards (crd_type, crd_value, crd_img) values ('Stardust3', 3 , 'images/stardust3.png'); 
 

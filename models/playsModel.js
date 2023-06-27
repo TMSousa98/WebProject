@@ -36,21 +36,38 @@ class Play {
     }
 
     static async populateCards(p1,p2,game) {
-        await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?,?)",[null,game.id],async function(err, result, fields) {
-            if (err) throw err;
+        console.log("populating")
+   
+        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
+            console.log(data[0].insertId);
+            let handId = data[0].insertId;
             
-            console.log(result.insertId);
-            await pool.query("SELECT * FROM cards",function(err, result, fields){
-                let cards = result;
+           pool.query("SELECT * FROM cards").then((result)=>{
+
+                let cards = result[0];
+                console.log(cards.length);
                 console.log(cards);
-               //await pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?,?)",[result.insertId,cards[i].crd_id])
+                for (let i = 0;i<cards.length;i++) {
 
-                
-            });
+                    pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?, ?)",[handId,cards[i].crd_id])
+                }
 
+            }); 
+        });
 
-          });
-        
+        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p1,game.id])
+        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p2,game.id])
+
+    }
+
+    static async distributeCards(userId,handId,game) {
+        pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_game = ? AND hand.hnd_usr = null",[game.id]).then((data)=>{
+            for (let i = 0;i<3;i++) {
+                let index = Math.random(0, data[0].length)
+                pool.query("UPDATE hand_cards SET hc_hand_id = ? WHERE hnd_game = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id])
+            }
+
+        });
     }
 
     // This considers that only one player plays at each moment, 
