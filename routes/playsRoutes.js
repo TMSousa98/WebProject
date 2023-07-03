@@ -24,4 +24,42 @@ router.patch('/endturn/:cardId', auth.verifyAuth, async function (req, res, next
     }
 });
 
+router.get("/cards", auth.verifyAuth,async function(req, res, next) {
+    try {
+        if (!req.game) {
+            res.status(400).send({msg:"You are not at a game, no cards available"});
+        } else {
+            
+            await Play.getCards(req.game.player.userId,req.game,(result)=>{
+                res.status(200).send(result);
+
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+
+});
+
+router.get("/cardsdata", auth.verifyAuth,async function(req, res, next) {
+    try {
+        if (!req.game) {
+            res.status(400).send({msg:"You are not at a game, no cards available"});
+        } else {
+            console.log("is done")
+            res.status(200).send({msg:"Done"});
+
+           
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+
+});
+
+
 module.exports = router;

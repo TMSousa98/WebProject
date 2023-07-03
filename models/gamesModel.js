@@ -43,7 +43,6 @@ class Game {
     // No verifications, we assume they were already made
     // This is mostly an auxiliary method
     static async fillPlayersOfGame(userId,game) {
-        console.log(userId)
         try {
             let [dbPlayers] = await pool.query(`Select * from user 
             inner join user_game on ug_user_id = usr_id
@@ -53,7 +52,8 @@ class Game {
                 let player = new Player(dbPlayer.ug_id,dbPlayer.usr_name,
                             new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order);
 
-                            player.userId = userId;
+                            player.userId = dbPlayer.ug_user_id;
+                            //player.userId = dbPlayers.ug_user_id
                 if (dbPlayer.usr_id == userId) game.player = player;
                 else game.opponents.push(player);
             }

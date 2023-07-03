@@ -15,6 +15,12 @@ class CardInfo {
     static cardheight = 150;
     static cardwidth = 100;
 
+    constructor(cardid,cardnum,cardtype) {
+        this.cardid = cardid;
+        this.cardnum = cardnum;
+
+    }
+
     draw(i){
         fill(180);
         let x = this.getCardX(i)
@@ -25,10 +31,6 @@ class CardInfo {
         if (this.cardimg != null) {
             image(this.cardimg,x,y,CardInfo.cardwidth,CardInfo.cardheight);
         }
-    }
-
-    clickcard(){
-        
     }
 
     loadAsset(cardlink) {

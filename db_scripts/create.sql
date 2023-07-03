@@ -40,6 +40,14 @@ create table cards(
     crd_value int not null,
     crd_img varchar(255) not null,
     primary key (crd_id));
+    
+create table battle (
+    bat_id int not null auto_increment,
+    bat_userid int not null,
+    bat_gameid int not null, 
+    bat_cardid int not null,
+    bat_turn int not null,
+    primary key (bat_id));
 
 create table game_state (
     gst_id int not null auto_increment,
@@ -76,7 +84,7 @@ create table scoreboard (
 # Foreign Keys
 
 alter table hand_cards add constraint hand_fk_hand_cards_id
-			foreign key (hc_hand_id) references hand(hand_id)
+			foreign key (hc_hand_id) references hand(hnd_id)
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 alter table hand add constraint hand_fk_hnd_usr
@@ -98,6 +106,18 @@ alter table turns add constraint turns_fk_crd_id
 alter table game add constraint game_fk_match_state
             foreign key (gm_state_id) references game_state(gst_id) 
 			ON DELETE NO ACTION ON UPDATE NO ACTION;
+            
+alter table battle add constraint battle_fk_user_id
+			foreign key (bat_userid) references user(usr_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            
+alter table battle add constraint battle_fk_game_id
+			foreign key (bat_gameid) references game(gm_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            
+alter table battle add constraint battle_fk_card_id
+			foreign key (bat_cardid) references cards(crd_id)
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 alter table user_game add constraint user_game_fk_user
             foreign key (ug_user_id) references user(usr_id) 

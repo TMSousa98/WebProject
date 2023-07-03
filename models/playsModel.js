@@ -19,6 +19,10 @@ class Play {
             let myTurn = (Math.random() < 0.5);
             let p1Id = myTurn ? game.player.id : game.opponents[0].id;
             let p2Id = myTurn ? game.opponents[0].id : game.player.id;
+
+            let user1 = myTurn ? game.player.userId : game.opponents[0].userId;
+            let user2 = myTurn ? game.opponents[0].userId : game.player.userId;
+
             // Player that start changes to the state Playing and order 1 
             await pool.query(`Update user_game set ug_state_id=?,ug_order=? where ug_id = ?`, [2, 1, p1Id]);
             // Player that is second changes to order 2
@@ -28,47 +32,79 @@ class Play {
             await pool.query(`Update game set gm_state_id=? where gm_id = ?`, [2, game.id]);
 
             // ---- Specific rules for each game start bellow
-            this.populateCards(p1Id,p2Id,game)
+            this.populateCards2(user1,user2,game)
         } catch (err) {
             console.log(err);
             return { status: 500, result: err };
         }
     }
 
-    static async populateCards(p1,p2,game) {
-        console.log("populating")
+
+    static async populateCards2(p1,p2,game) {
    
-        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
-            console.log(data[0].insertId);
+        await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
             let handId = data[0].insertId;
             
-           pool.query("SELECT * FROM cards").then((result)=>{
+           pool.query("SELECT * FROM cards").then(async (result)=>{
 
                 let cards = result[0];
-                console.log(cards.length);
-                console.log(cards);
+
                 for (let i = 0;i<cards.length;i++) {
 
-                    pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?, ?)",[handId,cards[i].crd_id])
+                    await pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?, ?)",[handId,cards[i].crd_id]);
                 }
+
+                console.log("player 1 "+p1);
+                console.log("player 2 "+p2);
+        
+                await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p1,game.id]).then(async (hand)=>{
+                    await this.distributeCards(p1,hand[0].insertId,game)
+                    
+                    await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p2,game.id]).then(async (hand2)=>{
+                        await this.distributeCards(p2,hand2[0].insertId,game);
+    
+                    });
+
+
+                });
+                
+
+                
 
             }); 
         });
 
-        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p1,game.id])
-        pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p2,game.id])
+        
+
 
     }
 
     static async distributeCards(userId,handId,game) {
-        pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_game = ? AND hand.hnd_usr = null",[game.id]).then((data)=>{
-            for (let i = 0;i<3;i++) {
-                let index = Math.random(0, data[0].length)
-                pool.query("UPDATE hand_cards SET hc_hand_id = ? WHERE hnd_game = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id])
+       await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_gm = ? AND hand.hnd_usr is null",[game.id]).then(async (data)=>{
+            console.log(data[0]);
+            console.log(data[0].length);
+            console.log(data[0][0]);
+
+            if (data[0].length > 0) {
+                for (let i = 0;i<3;i++) {
+                   // let index = Math.floor(Math.random() * data[0].length);
+                    //if (data[0][i] != undefined) {
+
+                    await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][i].hc_card_id])
+                   // }
+                }
             }
 
         });
     }
+
+
+    static async getCards(userId,game,onResult) {
+        pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id JOIN cards ON cards.crd_id = hand_cards.hc_card_id where hnd_gm = ? AND hand.hnd_usr = ?",[game.id,userId]).then((data)=>{
+            onResult(data[0]);
+        })
+    }
+
 
     // This considers that only one player plays at each moment, 
     // so ending my turn starts the other players turn
@@ -108,8 +144,33 @@ class Play {
     }
 
     static async finishTurn(game,cardPlayed) {
-        console.log(game.player.id)
-        await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,(game.player.userId)]);
+        let result = await pool.query("select gm_turn from game where gm_id = ?",[game.id]);
+      // await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,game.player.userId]);
+       await pool.query("Insert into battle (bat_userid,bat_gameid,bat_cardid,bat_turn) VALUES (?,?,?,?)",[game.player.id,game.id,cardPlayed,result[0][0].gm_turn]);
+
+        await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ? ",[cardPlayed,game.player.userId])
+
+
+    }
+    
+    static async battle(game) {
+        let result = await pool.query("SELECT * FROM battle JOIN cards ON bat_cardid = crd_id WHERE bat_gameid = 8 ORDER BY bat_turn DESC LIMIT 2",[game.id])
+        
+        let p1Card = result[0][0];
+        let p2Card = result[0][1];
+        
+        let winner = null;
+
+        if(p1Card.crd_value > p2Card.crd_value){
+            winner = p1Card;
+        } else if (p1Card.crd_value < p2Card.crd_value) {
+            winner = p2Card;
+        }
+
+        if (winner != null) {
+            pool.query("UPDATE scoreboard SET sb_points = sb_points + 1 WHERE sb_user_game_id = ?",[game.player.id]);
+            
+        }
 
     }
 
@@ -125,9 +186,9 @@ class Play {
 
             // Insert score lines with the state and points.
             // For this template both are  tied (id = 1) and with one point 
-            let sqlScore = `Insert into scoreboard (sb_user_game_id,sb_state_id,sb_points) values (?,?,?)`;
+          /*  let sqlScore = `Insert into scoreboard (sb_user_game_id,sb_state_id,sb_points) values (?,?,?)`;
             await pool.query(sqlScore, [game.player.id,1,1]);
-            await pool.query(sqlScore, [game.opponents[0].id,1,1]);
+            await pool.query(sqlScore, [game.opponents[0].id,1,1]);*/
 
             return { status: 200, result: { msg: "Game ended. Check scores." } };
         } catch (err) {

@@ -1,3 +1,6 @@
+let cards_UpdateTimer = 2;
+let current_cards_UpdateTimer = 0;
+
 
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
@@ -40,9 +43,9 @@ async function setup() {
 
 
     GameInfo.prepareUI();
-    HandInfo.cards.push(createCard(1,"images/nebula.png"))
+   /* HandInfo.cards.push(createCard(1,"images/nebula.png"))
     HandInfo.cards.push(createCard(2,"images/solar.jpg"))
-    HandInfo.cards.push(createCard(3,"images/stardust.png"))
+    HandInfo.cards.push(createCard(3,"images/stardust.png"))*/
 
     GameInfo.loading = false;
 }
@@ -61,6 +64,15 @@ function draw() {
     }
 
     HandInfo.draw()
+
+
+    if (current_cards_UpdateTimer <= 0) {
+        current_cards_UpdateTimer = cards_UpdateTimer;
+        fetchCards();
+    } else {
+        current_cards_UpdateTimer -= deltaTime;
+    }
+
 }
 
 async function mouseClicked() {
