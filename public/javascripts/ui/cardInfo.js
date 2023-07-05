@@ -15,37 +15,36 @@ class CardInfo {
     static cardheight = 150;
     static cardwidth = 100;
 
+    x = 0;
+    y = 0;
+
+    isFlipped = true;
+
     constructor(cardid,cardnum,cardtype) {
         this.cardid = cardid;
         this.cardnum = cardnum;
 
     }
 
-    draw(i){
+    static create(crdData) 
+    {
+        return new CardInfo(crdData.card_id,crdData.card_num,crdData.card_img);
+    }
+
+    draw(){
         fill(180);
-        let x = this.getCardX(i)
-        let y = this.getCardY()
-        
-        rect(x, y,CardInfo.cardwidth,CardInfo.cardheight);
+        rect(this.x, this.y,this.cardwidth,this.cardheight);
        // rect(GameInfo.width-250, GameInfo.height-150, 100, 100);
-        if (this.cardimg != null) {
-            image(this.cardimg,x,y,CardInfo.cardwidth,CardInfo.cardheight);
+        if (this.isFlipped) {
+            if (this.cardimg != null) {
+                image(this.cardimg,this.x,this.y,this.cardwidth,this.cardheight);
+            }
         }
     }
 
     loadAsset(cardlink) {
         this.cardimg = loadImage(cardlink)
-    }
-
-
-    getCardX(x) {
-        let cardOffset = 10;
-
-        return (GameInfo.width-250)-((CardInfo.cardwidth + cardOffset)*x);
-    }
-
-    getCardY() {
-        return GameInfo.height-150;
+        console.log("loading img "+this.cardimg);
     }
 
 }

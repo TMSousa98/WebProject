@@ -16,7 +16,7 @@ async function refresh() {
 }
 
 function preload() {
-
+    CardStorage.loadCards();
 }
 function createCard(id,imgLink) {
     crd = new CardInfo();
@@ -63,12 +63,14 @@ function draw() {
         GameInfo.scoreBoard.draw();
     }
 
-    HandInfo.draw()
+    HandInfo.draw();
+    HandInfo.drawBattle();
 
 
     if (current_cards_UpdateTimer <= 0) {
         current_cards_UpdateTimer = cards_UpdateTimer;
         fetchCards();
+        fetchBattle();
     } else {
         current_cards_UpdateTimer -= deltaTime;
     }

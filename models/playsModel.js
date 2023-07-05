@@ -31,6 +31,16 @@ class Play {
             // Changing the game state to start
             await pool.query(`Update game set gm_state_id=? where gm_id = ?`, [2, game.id]);
 
+            await pool.query("INSERT INTO scoreboard (sb_user_game_id,sb_state_id,sb_points) VALUES (?,?,?)",[game.player.id,1,0])
+            await pool.query("INSERT INTO scoreboard (sb_user_game_id,sb_state_id,sb_points) VALUES (?,?,?)",[game.opponents[0].id,1,0])
+
+
+            /*
+            sb_user_game_id,sb_state_id,sb_points) values (?,?,?)`;
+            await pool.query(sqlScore, [game.player.id,1,1]);
+            await pool.query(sqlScore, [game.opponents[0].id,1,1]);
+            */
+
             // ---- Specific rules for each game start bellow
             this.populateCards2(user1,user2,game)
         } catch (err) {
@@ -81,9 +91,6 @@ class Play {
 
     static async distributeCards(userId,handId,game) {
        await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_gm = ? AND hand.hnd_usr is null",[game.id]).then(async (data)=>{
-            console.log(data[0]);
-            console.log(data[0].length);
-            console.log(data[0][0]);
 
             if (data[0].length > 0) {
                 for (let i = 0;i<3;i++) {
@@ -105,6 +112,16 @@ class Play {
         })
     }
 
+    static async getGameCards() {
+        return await pool.query("SELECT * FROM cards");
+    }
+
+    static async getBattleCards(game,onResult) {
+        pool.query("SELECT * FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id where ug_game_id = ? ORDER BY bat_id DESC LIMIT 2",[game.id]).then((data)=>{
+            onResult(data[0]);
+        })
+    }
+
 
     // This considers that only one player plays at each moment, 
     // so ending my turn starts the other players turn
@@ -121,8 +138,11 @@ class Play {
             await pool.query(`Update user_game set ug_state_id=? where ug_id = ?`,
                 [2, game.opponents[0].id]);
 
+                await this.finishTurn(game,crd_id)
+
             // Both players played
             if (game.player.order == 2) {
+                await this.battle(game);
                 // Criteria to check if game ended
                 if (await checkEndGame(game)) {
                     return await Play.endGame(game);
@@ -133,7 +153,6 @@ class Play {
                 }
             }
 
-            this.finishTurn(game,crd_id)
 
 
             return { status: 200, result: { msg: "Your turn ended." } };
@@ -146,7 +165,7 @@ class Play {
     static async finishTurn(game,cardPlayed) {
         let result = await pool.query("select gm_turn from game where gm_id = ?",[game.id]);
       // await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,game.player.userId]);
-       await pool.query("Insert into battle (bat_userid,bat_gameid,bat_cardid,bat_turn) VALUES (?,?,?,?)",[game.player.id,game.id,cardPlayed,result[0][0].gm_turn]);
+       await pool.query("Insert into battle (bat_ug_id,bat_cardid,bat_turn) VALUES (?,?,?)",[game.player.id,cardPlayed,result[0][0].gm_turn]);
 
         await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ? ",[cardPlayed,game.player.userId])
 
@@ -154,7 +173,7 @@ class Play {
     }
     
     static async battle(game) {
-        let result = await pool.query("SELECT * FROM battle JOIN cards ON bat_cardid = crd_id WHERE bat_gameid = 8 ORDER BY bat_turn DESC LIMIT 2",[game.id])
+        let result = await pool.query("SELECT * FROM battle JOIN cards ON bat_cardid = crd_id JOIN user_game ON ug_id = bat_ug_id WHERE ug_game_id = ? ORDER BY bat_turn DESC LIMIT 2",[game.id])
         
         let p1Card = result[0][0];
         let p2Card = result[0][1];
@@ -168,10 +187,10 @@ class Play {
         }
 
         if (winner != null) {
-            pool.query("UPDATE scoreboard SET sb_points = sb_points + 1 WHERE sb_user_game_id = ?",[game.player.id]);
+            pool.query("UPDATE scoreboard SET sb_points = sb_points + 1 WHERE sb_user_game_id = ?",[winner.bat_ug_id]);
             
         }
-
+        
     }
 
     // Makes all the calculation needed to end and score the game

@@ -45,13 +45,26 @@ router.get("/cards", auth.verifyAuth,async function(req, res, next) {
 
 router.get("/cardsdata", auth.verifyAuth,async function(req, res, next) {
     try {
+      let result = await Play.getGameCards();
+      res.status(200).send(result);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+
+});
+
+router.get("/battle", auth.verifyAuth,async function(req, res, next) {
+    try {
         if (!req.game) {
             res.status(400).send({msg:"You are not at a game, no cards available"});
         } else {
-            console.log("is done")
-            res.status(200).send({msg:"Done"});
+            
+            await Play.getBattleCards(req.game,(result)=>{
+                res.status(200).send(result);
 
-           
+            });
         }
     } catch (err) {
         console.log(err);

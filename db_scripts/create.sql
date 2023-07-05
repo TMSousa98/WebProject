@@ -43,8 +43,7 @@ create table cards(
     
 create table battle (
     bat_id int not null auto_increment,
-    bat_userid int not null,
-    bat_gameid int not null, 
+    bat_ug_id int not null, 
     bat_cardid int not null,
     bat_turn int not null,
     primary key (bat_id));
@@ -107,12 +106,8 @@ alter table game add constraint game_fk_match_state
             foreign key (gm_state_id) references game_state(gst_id) 
 			ON DELETE NO ACTION ON UPDATE NO ACTION;
             
-alter table battle add constraint battle_fk_user_id
-			foreign key (bat_userid) references user(usr_id)
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
-            
-alter table battle add constraint battle_fk_game_id
-			foreign key (bat_gameid) references game(gm_id)
+alter table battle add constraint battle_fk_ug_id
+			foreign key (bat_ug_id) references user_game(ug_id)
             ON DELETE NO ACTION ON UPDATE NO ACTION;
             
 alter table battle add constraint battle_fk_card_id
