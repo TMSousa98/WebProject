@@ -1,7 +1,6 @@
 let cards_UpdateTimer = 2;
 let current_cards_UpdateTimer = 0;
 
-
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
         // Every time we are waiting
@@ -52,6 +51,21 @@ async function setup() {
 
 function draw() {
     background(220);
+
+    if (CardStorage.isLoaded) {
+        HandInfo.draw();
+        HandInfo.drawBattle();
+
+
+        if (current_cards_UpdateTimer <= 0) {
+            current_cards_UpdateTimer = cards_UpdateTimer;
+            fetchCards();
+            fetchBattle();
+        } else {
+            current_cards_UpdateTimer -= deltaTime;
+        }
+    }
+
     if (GameInfo.loading) {
         textAlign(CENTER, CENTER);
         textSize(40);
@@ -62,18 +76,7 @@ function draw() {
     } else  {
         GameInfo.scoreBoard.draw();
     }
-
-    HandInfo.draw();
-    HandInfo.drawBattle();
-
-
-    if (current_cards_UpdateTimer <= 0) {
-        current_cards_UpdateTimer = cards_UpdateTimer;
-        fetchCards();
-        fetchBattle();
-    } else {
-        current_cards_UpdateTimer -= deltaTime;
-    }
+    
 
 }
 

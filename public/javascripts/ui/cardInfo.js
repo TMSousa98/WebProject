@@ -20,6 +20,8 @@ class CardInfo {
 
     isFlipped = true;
 
+    static cardbackimg;
+
     constructor(cardid,cardnum,cardtype) {
         this.cardid = cardid;
         this.cardnum = cardnum;
@@ -28,23 +30,26 @@ class CardInfo {
 
     static create(crdData) 
     {
-        return new CardInfo(crdData.card_id,crdData.card_num,crdData.card_img);
+        let crd = new CardInfo(crdData.card_id,crdData.card_num,null);
+        crd.cardimg = crdData.card_img;
+        return crd;
     }
 
     draw(){
         fill(180);
-        rect(this.x, this.y,this.cardwidth,this.cardheight);
+        rect(this.x, this.y,CardInfo.cardwidth,CardInfo.cardheight);
        // rect(GameInfo.width-250, GameInfo.height-150, 100, 100);
         if (this.isFlipped) {
             if (this.cardimg != null) {
-                image(this.cardimg,this.x,this.y,this.cardwidth,this.cardheight);
+                image(this.cardimg,this.x,this.y,CardInfo.cardwidth,CardInfo.cardheight);
             }
+        } else {
+            image(CardInfo.cardbackimg,this.x,this.y,CardInfo.cardwidth,CardInfo.cardheight);
         }
     }
 
     loadAsset(cardlink) {
         this.cardimg = loadImage(cardlink)
-        console.log("loading img "+this.cardimg);
     }
 
 }

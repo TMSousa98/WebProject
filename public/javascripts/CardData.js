@@ -5,14 +5,12 @@ class CardData {
     card_img;
 
 
-    constructor(id,num,img) {
+    constructor(id,num) {
         this.card_id = id;
         this.card_num = num;
-        this.card_img = img;
     }
 
     loadAsset(img) {
-        console.log("loading img "+img);
         this.card_img = loadImage(img);
     }
 }

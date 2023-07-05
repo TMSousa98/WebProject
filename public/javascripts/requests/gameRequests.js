@@ -48,17 +48,12 @@ async function fetchCards() {
       let data = { successful: response.status == 200,
         unauthenticated: response.status == 401,
         game: result}; 
-
-        console.log(data);
         
         let game = data.game;
 
         HandInfo.cards = [];
         for (let i = 0;i<game.length;i++) {
             let crdData = CardStorage.getCardById(game[i].crd_id);
-            console.log(game[i].crd_id);
-            console.log(crdData);
-
             if (crdData != null) {
                 let crd = CardInfo.create(crdData);
 //            crd.loadAsset(game[i].crd_img);
@@ -92,18 +87,22 @@ async function fetchBattle() {
         let cards = data.game;
 
         if (cards[0] != undefined) {
-            let crd = new CardInfo(cards[0].bat_cardid,null,null);
+            let crd = CardInfo.create(CardStorage.getCardById(cards[0].bat_cardid));
             crd.isFlipped = false;
             HandInfo.battleCard1 = crd;
         }
 
         if (cards[1] != undefined) {
-            let crd = new CardInfo(cards[1].bat_cardid,null,null);
+            let crd = CardInfo.create(CardStorage.getCardById(cards[1].bat_cardid));
             crd.isFlipped = false;
             HandInfo.battleCard2 = crd;
         }
 
-       
+       if (HandInfo.battleCard1 != null && HandInfo.battleCard2 != null) {
+            HandInfo.battleCard1.isFlipped = true;
+            HandInfo.battleCard2.isFlipped = true;
+
+       }
 
 
     } catch (err) {

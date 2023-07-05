@@ -42,7 +42,7 @@ class Play {
             */
 
             // ---- Specific rules for each game start bellow
-            this.populateCards2(user1,user2,game)
+            this.populateCards(user1,user2,game)
         } catch (err) {
             console.log(err);
             return { status: 500, result: err };
@@ -50,7 +50,7 @@ class Play {
     }
 
 
-    static async populateCards2(p1,p2,game) {
+    static async populateCards(p1,p2,game) {
    
         await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
             let handId = data[0].insertId;
@@ -94,16 +94,30 @@ class Play {
 
             if (data[0].length > 0) {
                 for (let i = 0;i<3;i++) {
-                   // let index = Math.floor(Math.random() * data[0].length);
+                    let index = Math.floor(Math.random() * data[0].length);
                     //if (data[0][i] != undefined) {
 
-                    await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][i].hc_card_id])
+                    await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id]);
+                    data[0].splice(index,1);
                    // }
                 }
             }
 
         });
     }
+
+
+    static async distributeCard(handId,game) {
+        let data = await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_gm = ? AND hand.hnd_usr is null",[game.id]);
+ 
+        if (data[0].length > 0) {
+            let index = Math.floor(Math.random() * data[0].length);
+                //if (data[0][i] != undefined) {
+
+            await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id]);
+        }
+ 
+     }
 
 
     static async getCards(userId,game,onResult) {
@@ -143,6 +157,7 @@ class Play {
             // Both players played
             if (game.player.order == 2) {
                 await this.battle(game);
+                await this.finishBattle(game);
                 // Criteria to check if game ended
                 if (await checkEndGame(game)) {
                     return await Play.endGame(game);
@@ -167,7 +182,7 @@ class Play {
       // await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,game.player.userId]);
        await pool.query("Insert into battle (bat_ug_id,bat_cardid,bat_turn) VALUES (?,?,?)",[game.player.id,cardPlayed,result[0][0].gm_turn]);
 
-        await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ? ",[cardPlayed,game.player.userId])
+       let hnd = await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ? ",[cardPlayed,game.player.userId]);
 
 
     }
@@ -191,6 +206,15 @@ class Play {
             
         }
         
+    }
+
+    static async finishBattle(game) {
+
+       let res = await pool.query("SELECT * FROM hand WHERE hnd_gm = ?",[game.id]);
+       let hands = res[0];
+        for (let i = 0;i<hands.length;i++) {
+            await this.distributeCard(hands[i].hnd_id,game);
+        }
     }
 
     // Makes all the calculation needed to end and score the game

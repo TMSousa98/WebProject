@@ -1,7 +1,12 @@
 class CardStorage {
     static cards = [];
 
+    static isLoaded = false;
+
     static async loadCards() {
+
+        CardInfo.cardbackimg = loadImage("images/cardback.png");
+
         try {
             let response = await fetch("/api/plays/cardsdata", {
                  headers: {
@@ -21,13 +26,12 @@ class CardStorage {
      
              this.cards = [];
              for (let i = 0;i<res.length;i++) {
-                
-                 let crd = new CardData(res[i].crd_id,res[i].crd_type,res[i].crd_value);
+                 let crd = new CardData(res[i].crd_id,res[i].crd_value);
                  crd.loadAsset(res[i].crd_img);
                  this.cards.push(crd);
                  
              }
-     
+             this.isLoaded = true;
      
          } catch (err) {
              // Treat 500 errors here
@@ -39,8 +43,9 @@ class CardStorage {
     static getCardById(id) {
         for (let i = 0;i<this.cards.length;i++) {
             let card = this.cards[i];
+
             if (card != undefined && card != null) {
-                if (card.crd_id == id) {
+                if (card.card_id == id) {
                     return card;
                 }
             }

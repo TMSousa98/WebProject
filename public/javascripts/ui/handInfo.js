@@ -15,7 +15,9 @@ class HandInfo{
             for (let i = 0;i<this.cards.length;i++) {
                 this.cards[i].x = this.getCardX(i);
                 this.cards[i].y = this.getCardY();
+
                 this.cards[i].draw()
+
             }
         }
 
@@ -32,7 +34,7 @@ class HandInfo{
         if (this.battleCard2 != null) {
             this.battleCard2.x = this.GetBattleX();
             this.battleCard2.y = this.GetBattleY() + cardOffset;
-            
+
             this.battleCard2.draw();
         } 
     }
