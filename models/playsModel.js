@@ -147,6 +147,8 @@ class Play {
     // NOTE: This might be the place to check for victory, but it depends on the game
     static async endTurn(game,crd_id) {
         try {
+
+           // await pool.query("UPDATE game SET gm_next_user = ? WHERE gm_id = ?",[game.opponents[0].id,game.id])
             // Change player state to waiting (1)
             await pool.query(`Update user_game set ug_state_id=? where ug_id = ?`,
                 [1, game.player.id]);
@@ -160,10 +162,15 @@ class Play {
             if (game.player.order == 2) {
                 await this.battle(game);
                 await this.finishBattle(game);
+                
+                await pool.query("UPDATE game SET gm_next_user = ? WHERE gm_id = ?",[game.opponents[0].id,game.id])
+                await pool.query(`Update user_game set ug_state_id=? where ug_game_id = ?`,[1,game.id]);
                 // Criteria to check if game ended
                 if (await checkEndGame(game)) {
                     return await Play.endGame(game);
                 } else {
+
+
                     // Increase the number of turns and continue 
                     await pool.query(`Update game set gm_turn=gm_turn+1 where gm_id = ?`,
                         [game.id]);
@@ -242,6 +249,16 @@ class Play {
             console.log(err);
             return { status: 500, result: err };
         }
+    }
+
+    static async getMatchStatus(game) {
+        let gm = await pool.query("SELECT * FROM game WHERE gm_id = ? AND (gm_turn_timestamp + 2) < CURRENT_TIMESTAMP() AND gm_next_user IS NOT NULL",[game.id]);
+        if (gm[0].length > 0) {
+            await pool.query("UPDATE user_game SET ug_state_id = 2 WHERE ug_game_id = ? AND ug_id = ?",[game.id,gm[0][0].gm_next_user]);
+            await pool.query("UPDATE game SET gm_next_user = NULL WHERE gm_id = ? ",[game.id])
+
+        }
+        
     }
 }
 

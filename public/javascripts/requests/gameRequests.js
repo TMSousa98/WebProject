@@ -70,6 +70,28 @@ async function fetchCards() {
     }
 }
 
+async function fetchMatchStatus() {
+    try {
+       let response = await fetch("/api/plays/matchstatus", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+          method: "GET"
+      })
+      let result = await response.json();
+      let data = { successful: response.status == 200,
+        unauthenticated: response.status == 401,
+        game: result}; 
+        
+
+    } catch (err) {
+        // Treat 500 errors here
+        console.log(err);
+        return {err: err};
+    }
+}
+
 async function fetchBattle() {
     try {
        let response = await fetch("/api/plays/battle", {

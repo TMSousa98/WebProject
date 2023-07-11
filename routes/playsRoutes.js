@@ -74,5 +74,22 @@ router.get("/battle", auth.verifyAuth,async function(req, res, next) {
 
 });
 
+router.get("/matchstatus", auth.verifyAuth,async function(req, res, next) {
+    try {
+        if (!req.game) {
+            res.status(400).send({msg:"You are not at a game"});
+        } else {
+            
+            await Play.getMatchStatus(req.game);
+            res.status(200).send({state:"success"});
+
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+
+});
 
 module.exports = router;

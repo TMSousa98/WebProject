@@ -14,6 +14,7 @@ create table game (
     gm_turn int not null default 1,
     gm_state_id int not null,
     gm_turn_timestamp TIMESTAMP,
+    gm_next_user int,
     primary key (gm_id));
 
 create table hand (
@@ -105,6 +106,10 @@ alter table turns add constraint turns_fk_crd_id
 
 alter table game add constraint game_fk_match_state
             foreign key (gm_state_id) references game_state(gst_id) 
+			ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+alter table game add constraint game_fk_next_user
+            foreign key (gm_next_user) references user_game(ug_id) 
 			ON DELETE NO ACTION ON UPDATE NO ACTION;
             
 alter table battle add constraint battle_fk_ug_id

@@ -1,6 +1,9 @@
 let cards_UpdateTimer = 2;
 let current_cards_UpdateTimer = 0;
 
+let match_update_timer = 3;
+let current_match_update_timer = 0;
+
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
         // Every time we are waiting
@@ -59,11 +62,20 @@ function draw() {
 
         if (current_cards_UpdateTimer <= 0) {
             current_cards_UpdateTimer = cards_UpdateTimer;
+            fetchMatchStatus();
             fetchCards();
             fetchBattle();
         } else {
             current_cards_UpdateTimer -= deltaTime;
         }
+
+      /*  if (current_match_update_timer <= 0) {
+            current_cards_UpdateTimer = cards_UpdateTimer;
+            fetchMatchStatus();
+        } else {
+            current_cards_UpdateTimer -= deltaTime;
+
+        }*/
     }
 
     if (GameInfo.loading) {
