@@ -163,7 +163,7 @@ class Play {
                     return await Play.endGame(game);
                 } else {
                     // Increase the number of turns and continue 
-                    await pool.query(`Update game set gm_turn=gm_turn+1 where gm_id = ?`,
+                    await pool.query(`Update game set gm_turn=gm_turn+1, gm_turn_timestamp = CURRENT_TIMESTAMP() where gm_id = ?`,
                         [game.id]);
                 }
             }
