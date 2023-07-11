@@ -182,7 +182,7 @@ class Play {
       // await pool.query("Insert into turns (gm_id,crd_id,usr_id) VALUES (?,?,?)",[game.id,cardPlayed,game.player.userId]);
        await pool.query("Insert into battle (bat_ug_id,bat_cardid,bat_turn) VALUES (?,?,?)",[game.player.id,cardPlayed,result[0][0].gm_turn]);
 
-       let hnd = await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ? ",[cardPlayed,game.player.userId]);
+       let hnd = await pool.query("DELETE hand_cards FROM hand_cards JOIN hand ON hand.hnd_id = hand_cards.hc_hand_id WHERE hand_cards.hc_card_id = ? AND hand.hnd_usr = ?",[cardPlayed,game.player.userId]);
 
 
     }
