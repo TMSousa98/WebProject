@@ -131,8 +131,10 @@ class Play {
     }
 
     static async getBattleCards(game,onResult) {
-        pool.query("SELECT * FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id where ug_game_id = ? ORDER BY bat_id DESC LIMIT 2",[game.id]).then((data)=>{
+        pool.query("SELECT user_game.*, battle.*,game.gm_turn_timestamp FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id JOIN game ON user_game.ug_game_id = game.gm_id WHERE ug_game_id = ? and (battle.bat_turn = ? or (battle.bat_turn = ? - 1 and game.gm_turn_timestamp BETWEEN current_timestamp() - interval 2 second and current_timestamp())) ORDER BY bat_id DESC LIMIT 2",[game.id,game.turn,game.turn]).then((data)=>{
             onResult(data[0]);
+
+            
         })
     }
 
@@ -163,7 +165,7 @@ class Play {
                     return await Play.endGame(game);
                 } else {
                     // Increase the number of turns and continue 
-                    await pool.query(`Update game set gm_turn=gm_turn+1, gm_turn_timestamp = CURRENT_TIMESTAMP() where gm_id = ?`,
+                    await pool.query(`Update game set gm_turn=gm_turn+1 where gm_id = ?`,
                         [game.id]);
                 }
             }
@@ -200,6 +202,8 @@ class Play {
         } else if (p1Card.crd_value < p2Card.crd_value) {
             winner = p2Card;
         }
+
+        await pool.query("UPDATE game set gm_turn_timestamp = CURRENT_TIMESTAMP() where gm_id = ?",[game.id])
 
         if (winner != null) {
             pool.query("UPDATE scoreboard SET sb_points = sb_points + 1 WHERE sb_user_game_id = ?",[winner.bat_ug_id]);

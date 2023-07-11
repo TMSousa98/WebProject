@@ -86,6 +86,12 @@ async function fetchBattle() {
        
         let cards = data.game;
 
+        if (cards.length == 0) {
+            HandInfo.battleCard1 = null;
+            HandInfo.battleCard2 = null;
+
+        }
+
         if (cards[0] != undefined) {
             let crd = CardInfo.create(CardStorage.getCardById(cards[0].bat_cardid));
             crd.isFlipped = false;
