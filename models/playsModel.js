@@ -126,16 +126,16 @@ class Play {
         })
     }
 
+    static async getHandCards(game,player) {
+        return await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id WHERE hnd_usr = ? AND hnd_gm = ?",[player.userId,game.id])
+    }
+
     static async getGameCards() {
         return await pool.query("SELECT * FROM cards");
     }
 
     static async getBattleCards(game,onResult) {
-        pool.query("SELECT user_game.*, battle.*,game.gm_turn_timestamp FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id JOIN game ON user_game.ug_game_id = game.gm_id WHERE ug_game_id = ? and (battle.bat_turn = ? or (battle.bat_turn = ? - 1 and game.gm_turn_timestamp BETWEEN current_timestamp() - interval 2 second and current_timestamp())) ORDER BY bat_id DESC LIMIT 2",[game.id,game.turn,game.turn]).then((data)=>{
-            onResult(data[0]);
-
-            
-        })
+        return await pool.query("SELECT user_game.*, battle.*,game.gm_turn_timestamp FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id JOIN game ON user_game.ug_game_id = game.gm_id WHERE ug_game_id = ? and (battle.bat_turn = ? or (battle.bat_turn = ? - 1 and game.gm_turn_timestamp BETWEEN current_timestamp() - interval 2 second and current_timestamp())) ORDER BY bat_id DESC LIMIT 2",[game.id,game.turn,game.turn]);
     }
 
 
@@ -240,6 +240,27 @@ class Play {
 
             // Insert score lines with the state and points.
             // For this template both are  tied (id = 1) and with one point 
+            
+            let p1Score = await pool.query("SELECT * FROM scoreboard WHERE sb_user_game_id = ?",[game.player.id])
+            let p2Score =await pool.query("SELECT * FROM scoreboard WHERE sb_user_game_id = ?",[game.opponents[0].id])
+
+            if (p1Score[0][0].sb_points < p2Score[0][0].sb_points) {
+                await pool.query("UPDATE scoreboard SET sb_state_id = ? WHERE sb_user_game_id = ?",[2,p1Score[0][0].sb_user_game_id])
+            }
+
+            if (p1Score[0][0].sb_points > p2Score[0][0].sb_points) {
+                await pool.query("UPDATE scoreboard SET sb_state_id = ? WHERE sb_user_game_id = ?",[3,p1Score[0][0].sb_user_game_id])
+            }
+
+            if (p2Score[0][0].sb_points < p1Score[0][0].sb_points) {
+                await pool.query("UPDATE scoreboard SET sb_state_id = ? WHERE sb_user_game_id = ?",[2,p2Score[0][0].sb_user_game_id])
+            }
+
+            if (p2Score[0][0].sb_points > p1Score[0][0].sb_points) {
+                await pool.query("UPDATE scoreboard SET sb_state_id = ? WHERE sb_user_game_id = ?",[3,p2Score[0][0].sb_user_game_id])
+            }
+
+
           /*  let sqlScore = `Insert into scoreboard (sb_user_game_id,sb_state_id,sb_points) values (?,?,?)`;
             await pool.query(sqlScore, [game.player.id,1,1]);
             await pool.query(sqlScore, [game.opponents[0].id,1,1]);*/

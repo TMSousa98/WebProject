@@ -1,11 +1,3 @@
-const Cardtype = {
-
-    solar: "solar",
-    vortex: "vortex",
-    nebula: "nebula",
-    stardust: "stardust"
-}
-
 
 class CardInfo {
     cardid = 0
@@ -14,6 +6,8 @@ class CardInfo {
     cardimg = null;
     static cardheight = 150;
     static cardwidth = 100;
+
+    static clicksound = "mouse click"
 
     x = 0;
     y = 0;
@@ -50,6 +44,10 @@ class CardInfo {
 
     loadAsset(cardlink) {
         this.cardimg = loadImage(cardlink)
+    }
+
+    onclick() {
+        AudioStorage.playSound(CardInfo.clicksound)
     }
 
 }

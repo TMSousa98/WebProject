@@ -38,12 +38,24 @@ class ScoreWindow extends Window {
             
             text(this.player.name,this.x+this.width/5,this.y+2*this.height/5,this.width/5,this.height/5);
             text(this.player.state,this.x+2*this.width/5,this.y+2*this.height/5,this.width/5,this.height/5);
+
             text(this.player.points,this.x+3*this.width/5,this.y+2*this.height/5,this.width/5,this.height/5);
            
             text(this.opp.name,this.x+this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
-            text(this.opp.state,this.x+2*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
+           text(this.opp.state,this.x+2*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
             text(this.opp.points,this.x+3*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
             
+        }
+    }
+
+    getResult(p1,p2) {
+
+        if (p1.points > p2.points) {
+            return "Win";
+        } else if (p1.points == p2.points) {
+            return "Tie"
+        } else {
+            return "Lost"
         }
     }
 

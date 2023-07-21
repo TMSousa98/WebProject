@@ -1,8 +1,3 @@
-let cards_UpdateTimer = 2;
-let current_cards_UpdateTimer = 0;
-
-let match_update_timer = 3;
-let current_match_update_timer = 0;
 
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
@@ -19,6 +14,7 @@ async function refresh() {
 
 function preload() {
     CardStorage.loadCards();
+    AudioStorage.loadAudios();
 }
 function createCard(id,imgLink) {
     crd = new CardInfo();
@@ -45,11 +41,15 @@ async function setup() {
 
 
     GameInfo.prepareUI();
-   /* HandInfo.cards.push(createCard(1,"images/nebula.png"))
-    HandInfo.cards.push(createCard(2,"images/solar.jpg"))
-    HandInfo.cards.push(createCard(3,"images/stardust.png"))*/
 
     GameInfo.loading = false;
+
+
+    setInterval(()=> {
+        fetchBoard();
+        fetchMatchStatus();
+
+    },500)
 }
 
 function draw() {
@@ -59,23 +59,6 @@ function draw() {
         HandInfo.draw();
         HandInfo.drawBattle();
 
-
-        if (current_cards_UpdateTimer <= 0) {
-            current_cards_UpdateTimer = cards_UpdateTimer;
-            fetchMatchStatus();
-            fetchCards();
-            fetchBattle();
-        } else {
-            current_cards_UpdateTimer -= deltaTime;
-        }
-
-      /*  if (current_match_update_timer <= 0) {
-            current_cards_UpdateTimer = cards_UpdateTimer;
-            fetchMatchStatus();
-        } else {
-            current_cards_UpdateTimer -= deltaTime;
-
-        }*/
     }
 
     if (GameInfo.loading) {

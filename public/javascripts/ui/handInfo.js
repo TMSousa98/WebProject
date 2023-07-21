@@ -61,6 +61,7 @@ class HandInfo{
 
                 if (mouseX >= x && mouseY >= y && mouseX <= cardWidth && mouseY <= cardHeight) {
                     this.selectedCard = this.cards[i];
+                    this.cards[i].onclick();
                 }
             }
         }
