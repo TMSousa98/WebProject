@@ -56,7 +56,6 @@ async function fetchCards() {
             let crdData = CardStorage.getCardById(game[i].crd_id);
             if (crdData != null) {
                 let crd = CardInfo.create(crdData);
-//            crd.loadAsset(game[i].crd_img);
                 HandInfo.cards.push(crd);
             }
             
@@ -190,7 +189,6 @@ async function fetchBoard() {
        let crdData = CardStorage.getCardById(hand_cards[i].hc_card_id);
        if (crdData != null) {
            let crd = CardInfo.create(crdData);
-//            crd.loadAsset(game[i].crd_img);
            HandInfo.cards.push(crd);
        }
        

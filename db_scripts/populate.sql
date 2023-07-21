@@ -25,7 +25,7 @@ insert into cards (crd_type, crd_value, crd_img) values ('Solar3', 3 , 'images/s
 insert into cards (crd_type, crd_value, crd_img) values ('Nebula3', 3 , 'images/nebula3.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Stardust3', 3 , 'images/stardust3.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Vortex3', 3 , 'images/vortex3.png'); 
-insert into cards (crd_type, crd_value, crd_img) values ('Solar4', 4 , 'images/solar4.jpg'); 
+insert into cards (crd_type, crd_value, crd_img) values ('Solar4', 4 , 'images/solar4.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Nebula4', 4 , 'images/nebula4.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Stardust4', 4 , 'images/stardust4.png');
 insert into cards (crd_type, crd_value, crd_img) values ('Vortex4', 4 , 'images/vortex4.png');  
@@ -37,7 +37,7 @@ insert into cards (crd_type, crd_value, crd_img) values ('Solar6', 6 , 'images/s
 insert into cards (crd_type, crd_value, crd_img) values ('Nebula6', 6 , 'images/nebula6.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Stardust6', 6 , 'images/stardust6.png');
 insert into cards (crd_type, crd_value, crd_img) values ('Vortex6', 6 , 'images/vortex6.png');   
-insert into cards (crd_type, crd_value, crd_img) values ('Solar7', 7 , 'images/solar7.jpg'); 
+insert into cards (crd_type, crd_value, crd_img) values ('Solar7', 7 , 'images/solar7.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Nebula7', 7 , 'images/nebula7.png'); 
 insert into cards (crd_type, crd_value, crd_img) values ('Stardust7', 7 , 'images/stardust7.png');
 insert into cards (crd_type, crd_value, crd_img) values ('Vortex7', 7 , 'images/vortex7.png');   
@@ -56,17 +56,17 @@ insert into cards (crd_type, crd_value, crd_img) values ('Vortex10', 10 , 'image
 insert into cards (crd_type, crd_value, crd_img) values ('VortexJ', 11 , 'images/vortexJ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('NebulaJ', 11 , 'images/nebulaJ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('SolarJ', 11 , 'images/solarJ.png');
-insert into cards (crd_type, crd_value, crd_img) values ('SardustJ', 11 , 'images/stadustJ.png');
+insert into cards (crd_type, crd_value, crd_img) values ('SardustJ', 11 , 'images/stardustJ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('VortexQ', 12 , 'images/vortexQ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('NebulaQ', 12 , 'images/nebulaQ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('SolarQ', 12 , 'images/solarQ.png');
-insert into cards (crd_type, crd_value, crd_img) values ('SardustQ', 12 , 'images/stadustQ.png');
+insert into cards (crd_type, crd_value, crd_img) values ('SardustQ', 12 , 'images/stardustQ.png');
 insert into cards (crd_type, crd_value, crd_img) values ('VortexK', 13 , 'images/vortexK.png');
 insert into cards (crd_type, crd_value, crd_img) values ('NebulaK', 13 , 'images/nebulaK.png');
 insert into cards (crd_type, crd_value, crd_img) values ('SolarK', 13 , 'images/solarK.png');
-insert into cards (crd_type, crd_value, crd_img) values ('SardustK', 13 , 'images/stadustK.png');
+insert into cards (crd_type, crd_value, crd_img) values ('SardustK', 13 , 'images/stardustK.png');
 insert into cards (crd_type, crd_value, crd_img) values ('VortexA', 14 , 'images/vortexA.png');
 insert into cards (crd_type, crd_value, crd_img) values ('NebulaA', 14 , 'images/nebulaA.png');
 insert into cards (crd_type, crd_value, crd_img) values ('SolarA', 14 , 'images/solarA.png');
-insert into cards (crd_type, crd_value, crd_img) values ('SardustA', 14 , 'images/stadustA.png');       
+insert into cards (crd_type, crd_value, crd_img) values ('SardustA', 14 , 'images/stardustA.png');       
 
