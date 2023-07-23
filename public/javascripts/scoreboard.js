@@ -2,7 +2,7 @@ window.onload = async function() {
     let result = await requestScores();
     if (!result.successful || result.err) {
         alert("Something wrong. Going to login page");
-        window.location.pathname = "/index.html"
+        window.location.pathname = "./index.html"
     }
     fillScores(result.scores);
 }

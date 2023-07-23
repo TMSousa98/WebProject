@@ -10,7 +10,7 @@ class AudioStorage {
     }
 
     static loadAudios() {
-        this.sounds.push({name: "mouse click",audio: loadSound("audios/mouseclick.mp3")})
+        this.sounds.push({name: "mouse click",audio: loadSound("./audios/mouseclick.mp3")})
     }
 
     static playSound(name) {

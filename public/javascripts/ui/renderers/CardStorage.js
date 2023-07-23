@@ -5,7 +5,7 @@ class CardStorage {
 
     static async loadCards() {
 
-        CardInfo.cardbackimg = loadImage("images/cardback.png");
+        CardInfo.cardbackimg = loadImage("./images/cardback.png");
 
         try {
             let response = await fetch("/api/plays/cardsdata", {

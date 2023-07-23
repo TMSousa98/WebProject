@@ -28,7 +28,7 @@ function createCard(id,imgLink) {
 
 async function setup() {
     let canvas = createCanvas(GameInfo.width, GameInfo.height);
-    bg = loadImage('images/board.png');
+    bg = loadImage('./images/board.png');
     canvas.parent('game');
     canvas.position(GameInfo.width/7,GameInfo.height/6);
     // preload  images

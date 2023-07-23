@@ -64,7 +64,7 @@ async function createMatch() {
         let result = await requestCreateMatch();
         if (!result.successful || result.err)
             throw result.err || { err: "Not successfull" }
-        window.location.pathname = "/waiting.html"
+        window.location.pathname = "./waiting.html"
     } catch (err) {
         console.log(err);
       //  alert("Something is not working");
