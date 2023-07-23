@@ -1,8 +1,11 @@
 <html>
-
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/common-pixel');
+  </style>
 <head>
   <title>Nebolartex Dust</title>
   <link rel="icon" type="image/x-icon" href="./images/favicon.ico"/>
+  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
   <link rel="stylesheet" href="/stylesheets/style.css">
   <script src="./javascripts/utils/verifications.js"></script>
   <script src="./javascripts/requests/matchesRequests.js"></script>
@@ -18,12 +21,12 @@
     <h1>Choose a match or create a new one</h1>
   </header>
   <main>
-    <p>After creating or joining a match you cannot leave and cannot
+    <p style="text-align:center">After creating or joining a match you cannot leave and cannot
       create/join other matches until you finish that match</p>
-    <input type="button" value="Refresh Matches" onclick="refresh()">
+      <p style="text-align:center"><input type="button" value="Refresh Matches" onclick="refresh()"></p>
 
     <section id="matches"></section>
-    <input type="button" value="Create my match" onclick="createMatch()">
+    <p style="text-align:center"><input type="button" value="Create my match" onclick="createMatch()"></p>
   </main>
 </body>
 

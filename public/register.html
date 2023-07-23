@@ -1,8 +1,11 @@
 <html>
-
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/common-pixel');
+  </style>
 <head>
   <title>Nebolartex Dust</title>
   <link rel="icon" type="image/x-icon" href="./images/favicon.ico"/>
+  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
   <link rel="stylesheet" href="/stylesheets/style.css">
   <script src="./javascripts/requests/usersRequests.js"></script>
   <script src="./javascripts/register.js"></script>
@@ -14,7 +17,7 @@
   </header>
   <main>
     <form action="javascript:register()">
-      <table>
+      <table class="center">
         <tr>
           <td>Name:</td>
           <td><input type="text" autocomplete="username" id="name"></td>
@@ -24,9 +27,9 @@
           <td><input type="password" autocomplete="new-password"  id="password"></td>
         </tr>
       </table>
-      <p id="msg" class="warning"></p>
-      <p><input type="submit" value="Register"></p>
-      <p><a href="index.html">Login page</a></p>
+      <p style="text-align:center" id="msg" class="warning"></p>
+      <p style="text-align:center"><input type="submit" value="Register"></p>
+      <p style="text-align:center"><a href="index.html">Login page</a></p>
     </form>
   </main>
 </body>

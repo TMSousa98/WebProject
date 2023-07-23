@@ -1,8 +1,6 @@
 class HandInfo{
 
     static cards = [];
-    //static deck = undefined;
-
 
     static selectedCard = null;
 
@@ -41,11 +39,11 @@ class HandInfo{
 
     static GetBattleX(){
 
-        return GameInfo.width-(GameInfo.width/2);
+        return GameInfo.width-(GameInfo.width/1.85);
     }
 
     static GetBattleY(){
-         return GameInfo.height-(((GameInfo.height/2))+140);
+         return GameInfo.height-(((GameInfo.height/1.7))+180);
     }
 
 
@@ -70,11 +68,11 @@ class HandInfo{
     static getCardX(x) {
         let cardOffset = 10;
 
-        return (GameInfo.width-250)-((CardInfo.cardwidth + cardOffset)*x);
+        return (GameInfo.width-539)-((CardInfo.cardwidth + cardOffset)*x);
     }
 
     static getCardY() {
-        return GameInfo.height-150;
+        return GameInfo.height-180;
     }
 
 }

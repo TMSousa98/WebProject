@@ -1,4 +1,6 @@
 
+let bg;
+
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
         // Every time we are waiting
@@ -26,7 +28,9 @@ function createCard(id,imgLink) {
 
 async function setup() {
     let canvas = createCanvas(GameInfo.width, GameInfo.height);
+    bg = loadImage('images/board.png');
     canvas.parent('game');
+    canvas.position(GameInfo.width/7,GameInfo.height/6);
     // preload  images
     
     await  getGameInfo();
@@ -35,7 +39,7 @@ async function setup() {
     //buttons (create a separated function if they are many)
     GameInfo.endturnButton = createButton('End Turn');
     GameInfo.endturnButton.parent('game');
-    GameInfo.endturnButton.position(GameInfo.width-150,GameInfo.height-50);
+    GameInfo.endturnButton.position(GameInfo.width-20,GameInfo.height+50);
     GameInfo.endturnButton.mousePressed(endturnAction);
     GameInfo.endturnButton.addClass('game')
 
@@ -53,7 +57,7 @@ async function setup() {
 }
 
 function draw() {
-    background(220);
+    background(bg);
 
     if (CardStorage.isLoaded) {
         HandInfo.draw();
@@ -65,7 +69,6 @@ function draw() {
         textAlign(CENTER, CENTER);
         textSize(40);
         fill('black');
-        text('Loading...', GameInfo.width/2, GameInfo.height/2);
     } else if (GameInfo.game.state == "Finished" && GameInfo.scoreWindow) {
         GameInfo.scoreWindow.draw();
     } else  {

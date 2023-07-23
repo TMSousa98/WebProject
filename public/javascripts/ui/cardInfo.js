@@ -32,7 +32,6 @@ class CardInfo {
     draw(){
         fill(180);
         rect(this.x, this.y,CardInfo.cardwidth,CardInfo.cardheight);
-       // rect(GameInfo.width-250, GameInfo.height-150, 100, 100);
         if (this.isFlipped) {
             if (this.cardimg != null) {
                 image(this.cardimg,this.x,this.y,CardInfo.cardwidth,CardInfo.cardheight);
