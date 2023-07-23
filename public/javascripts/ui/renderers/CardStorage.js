@@ -34,7 +34,6 @@ class CardStorage {
              this.isLoaded = true;
      
          } catch (err) {
-             // Treat 500 errors here
              console.log(err);
              return {err: err};
          }
