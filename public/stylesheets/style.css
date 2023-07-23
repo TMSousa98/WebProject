@@ -1,6 +1,22 @@
+
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'Common Pixel', sans-serif;
+  color:aliceblue;
+  background-image: url(../images/background.png) ;
+}
+
+input[type=submit]{
+  font-family: 'Common Pixel', sans-serif;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  text-align: center;
 }
 
 a {
