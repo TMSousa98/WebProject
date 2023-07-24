@@ -155,8 +155,9 @@ async function fetchBoard() {
     let cards = data.game.battle;
 
 
+    if (cards!=undefined){
 
-
+    
     if (cards.length == 0) {
         HandInfo.battleCard1 = null;
         HandInfo.battleCard2 = null;
@@ -180,11 +181,15 @@ async function fetchBoard() {
         HandInfo.battleCard2.isFlipped = true;
 
    }
+}
 
    let hand_cards = data.game.hand;
 
 
    HandInfo.cards = [];
+
+    if(hand_cards!=undefined){
+
    for (let i = 0;i<hand_cards.length;i++) {
        let crdData = CardStorage.getCardById(hand_cards[i].hc_card_id);
        if (crdData != null) {
@@ -193,5 +198,5 @@ async function fetchBoard() {
        }
        
    }
-
+    }
 }
