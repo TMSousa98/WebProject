@@ -11,6 +11,7 @@ class HandInfo{
         
         if (this.cards != undefined) {
             for (let i = 0;i<this.cards.length;i++) {
+                console.log("Drawing Card  " + i );
                 this.cards[i].x = this.getCardX(i);
                 this.cards[i].y = this.getCardY();
 
