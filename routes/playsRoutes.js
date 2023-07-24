@@ -80,7 +80,6 @@ router.get("/board", auth.verifyAuth,async function(req, res, next) {
         } else {
             let battleRes = await Play.getBattleCards(req.game);
             let handRes = await Play.getHandCards(req.game,req.game.player);
-            console.log({hand:handRes,battle:battleRes});
             res.status(200).json({hand:handRes[0],battle:battleRes[0]});
         }
     } catch (err) {

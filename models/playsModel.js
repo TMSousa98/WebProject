@@ -64,8 +64,6 @@ class Play {
                     await pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?, ?)",[handId,cards[i].crd_id]);
                 }
 
-                console.log("player 1 "+p1);
-                console.log("player 2 "+p2);
         
                 await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p1,game.id]).then(async (hand)=>{
                     await this.distributeCards(p1,hand[0].insertId,game)
