@@ -58,7 +58,7 @@ async function setup() {
 
 function draw() {
     background(bg);
-
+    console.log("Card Storage is loaded"+ CardStorage.isLoaded);
     if (CardStorage.isLoaded) {
         HandInfo.draw();
         HandInfo.drawBattle();
