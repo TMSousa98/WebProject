@@ -25,6 +25,10 @@ class CardStorage {
              let res = game[0]
      
              this.cards = [];
+            if(res!=undefined){
+
+        
+
              for (let i = 0;i<res.length;i++) {
                  let crd = new CardData(res[i].crd_id,res[i].crd_value);
                  crd.loadAsset(res[i].crd_img);
@@ -32,7 +36,7 @@ class CardStorage {
                  
              }
              this.isLoaded = true;
-     
+            }
          } catch (err) {
              console.log(err);
              return {err: err};
