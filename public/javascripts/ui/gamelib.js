@@ -57,7 +57,7 @@ async function setup() {
 }
 
 function draw() {
-    background(150);
+    background(bg);
 
     if (CardStorage.isLoaded) {
         HandInfo.draw();
