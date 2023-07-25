@@ -6,7 +6,7 @@ class CardInfo {
     cardimg = null;
     static cardheight = 150;
     static cardwidth = 100;
-
+    highlight = 255;
     static clicksound = "mouse click"
 
     x = 0;
@@ -34,8 +34,10 @@ class CardInfo {
         rect(this.x, this.y,CardInfo.cardwidth,CardInfo.cardheight);
         if (this.isFlipped) {
             if (this.cardimg != null) {
+                tint(this.highlight);
                 image(this.cardimg,this.x,this.y,CardInfo.cardwidth,CardInfo.cardheight);
-            }
+                tint(255);
+            }   
         } else {
             image(CardInfo.cardbackimg,this.x,this.y,CardInfo.cardwidth,CardInfo.cardheight);
         }
@@ -47,6 +49,7 @@ class CardInfo {
 
     onclick() {
         AudioStorage.playSound(CardInfo.clicksound)
+        this.highlight = 'green';
     }
 
 }
