@@ -5,18 +5,20 @@ const State = require("./statesModel");
 // so no need to create a model file for it
 class Player {
     userId = 0
-    constructor(id,name,state,order) {
+    constructor(id,name,state,order,score) {
 
         this.id = id;        
         this.name = name;
         this.state= state;
         this.order = order;
+        this.score = score;
     }
     export() {
         let player = new Player();
         player.name = this.name;
         player.state = this.state.export();
         player.order = this.order;
+        player.score = this.score;
         return player;
     }
 }
@@ -47,10 +49,11 @@ class Game {
             let [dbPlayers] = await pool.query(`Select * from user 
             inner join user_game on ug_user_id = usr_id
              inner join user_game_state on ugst_id = ug_state_id
+             inner join scoreboard on sb_user_game_id = ug_id
             where ug_game_id=?`, [game.id]);
             for (let dbPlayer of dbPlayers) {
                 let player = new Player(dbPlayer.ug_id,dbPlayer.usr_name,
-                            new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order);
+                            new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order, dbPlayer.sb_points);
 
                             player.userId = dbPlayer.ug_user_id;
                             //player.userId = dbPlayers.ug_user_id
@@ -63,7 +66,7 @@ class Game {
             return { status: 500, result: err };
         }
     }
-    
+
     static async getPlayerActiveGame(id) {
         try {
             let [dbGames] =
