@@ -31,10 +31,13 @@ a {
   color: #00B7FF;
 }
 
+
+
 .warning {
   color: lightgreen;
   font-size: larger;
   font-family: 'Common Pixel', sans-serif;
+  text-align: center;
 }
 
 #matches, #scores {
