@@ -1,5 +1,9 @@
 class CardStorage {
+    
+    //Stores all the cards in the game, so i can have them by their id
+    
     static cards = [];
+
 
     static isLoaded = false;
 

@@ -51,7 +51,9 @@ class Play {
 
 
     static async populateCards(p1,p2,game) {
-   
+        
+
+        //creates a null hand, that will store all the table cards
         await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
             let handId = data[0].insertId;
             

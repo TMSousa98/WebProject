@@ -53,7 +53,7 @@ async function setup() {
         fetchBoard();
         fetchMatchStatus();
 
-    },500)
+    },2000)
 }
 
 function draw() {
