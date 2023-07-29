@@ -57,7 +57,7 @@ class Game {
 
                             player.userId = dbPlayer.ug_user_id;
 
-                            player.score = this.getScore(dbPlayer.ug_id,game);
+                            player.score = await this.getScore(dbPlayer.ug_id,game);
                             //player.userId = dbPlayers.ug_user_id
                 if (dbPlayer.usr_id == userId) game.player = player;
                 else game.opponents.push(player);
@@ -202,7 +202,7 @@ class Game {
             return 0;
 
         }
-        return s[0][0].sb_points
+        return s[0][0].sb_points;
     }
 
 }

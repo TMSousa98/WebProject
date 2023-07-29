@@ -57,31 +57,6 @@ async function fetchMatchStatus() {
     }
 }
 
-async function fetchScore() {
-    try {
-        let response = await fetch("/api/plays/scores", {
-             headers: {
-                 'Accept': 'application/json',
-                 'Content-Type': 'application/json'
-             },
-           method: "GET"
-       })
-       let result = await response.json();
-       let data = { successful: response.status == 200,
-         unauthenticated: response.status == 401,
-         game: result}; 
-        
-        console.log(data.game);
-
-        scorePlayers = data.game.score;
- 
-     } catch (err) {
-         // Treat 500 errors here
-         console.log(err);
-         return {err: err};
-     }
-}
-
 //obtaian the cards on hand and arena
 
 async function fetchBoard() {
@@ -158,5 +133,9 @@ async function fetchBoard() {
         } else {
             HandInfo.trumpCardData = null;
         }
+    }
+    
+    if (data.game.board_last_card == null) {
+        HandInfo.trumpCardData = null;
     }
 }

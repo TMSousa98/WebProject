@@ -53,7 +53,6 @@ async function setup() {
     setInterval(()=> {
         fetchBoard();
         fetchMatchStatus();
-        fetchScore();
 
     },1000)
 }

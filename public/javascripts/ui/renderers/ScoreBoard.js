@@ -1,6 +1,3 @@
-let scorePlayers = []
-
-
 class ScoreBoard {
     static width = 300;
     static height = 100;
@@ -19,14 +16,14 @@ class ScoreBoard {
         textStyle(NORMAL);
         text("Turn: "+this.game.turn,ScoreBoard.x+10,ScoreBoard.y+ScoreBoard.height/4)
         text("Player: "+this.game.player.name,ScoreBoard.x+10,ScoreBoard.y+2*ScoreBoard.height/4);
+
+        text(`${this.game.player.score}`,ScoreBoard.x+170,ScoreBoard.y+2*ScoreBoard.height/4);
+
         text("Opponent: "+this.game.opponents[0].name,ScoreBoard.x+10,ScoreBoard.y+3*ScoreBoard.height/4);
+        text(`${this.game.opponents[0].score}`,ScoreBoard.x+170,ScoreBoard.y+3*ScoreBoard.height/4);
+
         text(`(${this.game.player.state})`,ScoreBoard.x+200,ScoreBoard.y+2*ScoreBoard.height/4);
-        if (scorePlayers != undefined && scorePlayers[0] != undefined) {
-
-            text(`(${scorePlayers[0][0].sb_points})`,ScoreBoard.x+120,ScoreBoard.y+2*ScoreBoard.height/4)
-            text(`(${scorePlayers[0][1].sb_points})`,ScoreBoard.x+120,ScoreBoard.y+3*ScoreBoard.height/4)
-
-        }
+        
 
         if (this.game.state == "Finished"){ 
             fill(200,0,0);

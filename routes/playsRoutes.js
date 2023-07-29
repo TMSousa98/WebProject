@@ -109,23 +109,4 @@ router.get("/matchstatus", auth.verifyAuth,async function(req, res, next) {
 
 });
 
-
-router.get("/scores", auth.verifyAuth,async function(req, res, next) {
-    try {
-        if (!req.game) {
-            res.status(400).send({msg:"You are not at a game"});
-        } else {
-            
-            let _score = await Play.getAllScores(req.game);
-            res.status(200).send({score:_score});
-
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(500).send(err);
-    }
-
-
-});
-
 module.exports = router;

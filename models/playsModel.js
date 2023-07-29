@@ -2,6 +2,7 @@ const pool = require("../config/database");
 
 // auxiliary function to check if the game ended 
 async function checkEndGame(game) {
+
     return game.turn >= Play.maxNumberTurns;
 }
 
@@ -9,7 +10,7 @@ class Play {
     // At this moment I do not need to store information so we have no constructor
 
     // Just a to have a way to determine end of game
-    static maxNumberTurns = 10;
+    static maxNumberTurns = 20;
 
 
     // we consider all verifications were made
@@ -315,11 +316,6 @@ class Play {
 
         }
         
-    }
-
-    
-    static async getAllScores(game) {
-        return await pool.query("SELECT * FROM scoreboard JOIN user_game ON sb_user_game_id = ug_user_id where ug_game_id = ?",[game.id]);
     }
 }
 
