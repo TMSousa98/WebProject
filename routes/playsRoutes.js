@@ -80,7 +80,8 @@ router.get("/board", auth.verifyAuth,async function(req, res, next) {
         } else {
             let battleRes = await Play.getBattleCards(req.game);
             let handRes = await Play.getHandCards(req.game,req.game.player);
-            res.status(200).json({hand:handRes[0],battle:battleRes[0]});
+            let boardLastCard = await Play.getTableLastCard(req.game);
+            res.status(200).json({hand:handRes[0],battle:battleRes[0],board_last_card:boardLastCard,playerId:req.game.player.id });
         }
     } catch (err) {
         console.log(err);
@@ -98,6 +99,25 @@ router.get("/matchstatus", auth.verifyAuth,async function(req, res, next) {
             
             await Play.getMatchStatus(req.game);
             res.status(200).send({state:"success"});
+
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+
+});
+
+
+router.get("/scores", auth.verifyAuth,async function(req, res, next) {
+    try {
+        if (!req.game) {
+            res.status(400).send({msg:"You are not at a game"});
+        } else {
+            
+            let _score = await Play.getAllScores(req.game);
+            res.status(200).send({score:_score});
 
         }
     } catch (err) {

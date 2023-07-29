@@ -26,6 +26,7 @@ async function endturnAction() {
         } else alert("Something went wrong when ending the turn.")
     
         HandInfo.selectedCard = null;
+        HandInfo.selectedIndex = null;
     }
 }
 

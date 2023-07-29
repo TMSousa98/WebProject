@@ -7,11 +7,23 @@ class HandInfo{
     static battleCard1 = null;
     static battleCard2 = null;
 
+    static trumpCard = null;
+
+    static trumpCardData = null;
+
+    static selectedIndex = null;
+
     static draw() {
-        
+        this.drawHand();
+        this.drawBattle();
+        this.drawTrump();
+       
+
+    }
+
+    static drawHand() {
         if (this.cards != undefined) {
             for (let i = 0;i<this.cards.length;i++) {
-                console.log("Drawing Card  " + i );
                 this.cards[i].x = this.getCardX(i);
                 this.cards[i].y = this.getCardY();
 
@@ -19,11 +31,9 @@ class HandInfo{
 
             }
         }
-
     }
 
     static drawBattle() {
-        let cardOffset = CardInfo.cardheight + 10;
 
         if (this.battleCard1 != null) {
             this.battleCard1.x = this.GetBattleX();
@@ -32,10 +42,21 @@ class HandInfo{
         } 
         if (this.battleCard2 != null) {
             this.battleCard2.x = this.GetBattleX();
-            this.battleCard2.y = this.GetBattleY() + cardOffset;
+            this.battleCard2.y = this.GetBattleY()+ 170 ;
 
             this.battleCard2.draw();
         } 
+    }
+
+    static drawTrump() {
+        if (this.trumpCard != null && this.trumpCardData != null) {
+            
+            fill(180);
+            image(this.trumpCardData.card_img,100,250,CardInfo.cardwidth,CardInfo.cardheight);
+            text("Trump",126,240);
+
+            //image()
+        }
     }
 
     static GetBattleX(){
@@ -60,6 +81,7 @@ class HandInfo{
 
                 if (mouseX >= x && mouseY >= y && mouseX <= cardWidth && mouseY <= cardHeight) {
                     this.selectedCard = this.cards[i];
+                    this.selectedIndex = i;
                     this.cards[i].onclick();
                 }
             }

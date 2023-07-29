@@ -57,7 +57,7 @@ class Play {
         await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[null,game.id]).then((data)=>{
             let handId = data[0].insertId;
             
-           pool.query("SELECT * FROM cards").then(async (result)=>{
+           pool.query("SELECT * FROM cards ORDER BY Rand()").then(async (result)=>{
 
                 let cards = result[0];
 
@@ -65,6 +65,10 @@ class Play {
 
                     await pool.query("INSERT hand_cards (hc_hand_id,hc_card_id) values (?, ?)",[handId,cards[i].crd_id]);
                 }
+
+                await pool.query("UPDATE game SET gm_trumph = ? WHERE gm_id = ? ",[cards[cards.length-1].crd_type,game.id]);
+
+                game.trump = cards[cards.length-1].crd_type;
 
         
                 await pool.query("INSERT hand (hnd_usr,hnd_gm) values (?, ?)",[p1,game.id]).then(async (hand)=>{
@@ -94,11 +98,9 @@ class Play {
 
             if (data[0].length > 0) {
                 for (let i = 0;i<3;i++) {
-                    let index = Math.floor(Math.random() * data[0].length);
                     //if (data[0][i] != undefined) {
 
-                    await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id]);
-                    data[0].splice(index,1);
+                    await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][i].hc_card_id]);
                    // }
                 }
             }
@@ -111,10 +113,16 @@ class Play {
         let data = await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_gm = ? AND hand.hnd_usr is null",[game.id]);
  
         if (data[0].length > 0) {
-            let index = Math.floor(Math.random() * data[0].length);
                 //if (data[0][i] != undefined) {
 
-            await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][index].hc_card_id]);
+          //  let value = await pool.query("SELECT count(*) FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id where hnd_gm = ? AND hand.hnd_usr = ?",[game.id,handId])    
+            
+
+            await pool.query("UPDATE hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id SET hc_hand_id = ? WHERE hnd_gm = ? AND hc_card_id = ? ",[handId,game.id,data[0][0].hc_card_id]);
+
+            /*for (let i = value;i<Math.min(3,data.length);i++) {
+
+            }*/
         }
  
      }
@@ -136,6 +144,14 @@ class Play {
 
     static async getBattleCards(game,onResult) {
         return await pool.query("SELECT user_game.*, battle.*,game.gm_turn_timestamp FROM battle JOIN user_game ON user_game.ug_id = battle.bat_ug_id JOIN game ON user_game.ug_game_id = game.gm_id WHERE ug_game_id = ? and (battle.bat_turn = ? or (battle.bat_turn = ? - 1 and game.gm_turn_timestamp BETWEEN current_timestamp() - interval 2 second and current_timestamp())) ORDER BY bat_id DESC LIMIT 2",[game.id,game.turn,game.turn]);
+    }
+
+    static async getTableLastCard(game) {
+
+        let board_hand = await pool.query("SELECT * FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_id WHERE hand.hnd_usr is null AND hand.hnd_gm = ?",[game.id]);
+        return board_hand[0][board_hand[0].length-1];
+
+       // return await pool.query("SELECT hand.hnd_id,hand.hnd_usr,hand.hnd_gm,hand_cards.hc_card_id,cards.* FROM hand_cards JOIN hand ON hand_cards.hc_hand_id = hand.hnd_gm JOIN cards ON hand_cards.hc_card_id = cards.crd_id WHERE hand.hnd_gm = ? AND hand.hnd_usr is null ORDER BY hand_cards.hc_hand_id DESC limit 1",[game.id])
     }
 
 
@@ -204,24 +220,43 @@ class Play {
         
         let winner = null;
 
-        if(p1Card.crd_value > p2Card.crd_value){
-            winner = p1Card;
-        } else if (p1Card.crd_value < p2Card.crd_value) {
-            winner = p2Card;
+
+        if (p2Card.crd_type == p1Card.crd_type) {
+            if (p2Card.crd_value > p1Card.crd_value) {
+                winner = p2Card;
+            } else {
+                winner = p1Card;
+            }
+        } else {
+            if (p2Card.crd_type == game.trump) {
+                winner = p2Card;
+            }
+
+            if (p1Card.crd_type == game.trump) {
+                winner = p1Card;
+            }
+
+            if (p1Card.crd_type != game.trump && p2Card.crd_type != game.trump) {
+                winner = p1Card;
+            }
         }
+
 
         await pool.query("UPDATE game set gm_turn_timestamp = CURRENT_TIMESTAMP() where gm_id = ?",[game.id])
 
         if (winner != null) {
-            pool.query("UPDATE scoreboard SET sb_points = sb_points + 1 WHERE sb_user_game_id = ?",[winner.bat_ug_id]);
+           await pool.query("UPDATE scoreboard SET sb_points = sb_points + ? WHERE sb_user_game_id = ?",[(p1Card.crd_value + p2Card.crd_value),winner.bat_ug_id]);
             
         }
+        
+     //   await pool.query("UPDATE game SET gm_next_user = ? WHERE gm_id = ?",[winner.bat_ug_id,game.id])
+
         
     }
 
     static async finishBattle(game) {
 
-       let res = await pool.query("SELECT * FROM hand WHERE hnd_gm = ?",[game.id]);
+       let res = await pool.query("SELECT * FROM hand WHERE hnd_gm = ? AND hnd_usr is NOT NULL",[game.id]);
        let hands = res[0];
         for (let i = 0;i<hands.length;i++) {
             await this.distributeCard(hands[i].hnd_id,game);
@@ -280,6 +315,11 @@ class Play {
 
         }
         
+    }
+
+    
+    static async getAllScores(game) {
+        return await pool.query("SELECT * FROM scoreboard JOIN user_game ON sb_user_game_id = ug_user_id where ug_game_id = ?",[game.id]);
     }
 }
 

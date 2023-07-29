@@ -42,7 +42,7 @@ class ScoreWindow extends Window {
             text(this.player.points,this.x+3*this.width/5,this.y+2*this.height/5,this.width/5,this.height/5);
            
             text(this.opp.name,this.x+this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
-           text(this.opp.state,this.x+2*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
+            text(this.opp.state,this.x+2*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
             text(this.opp.points,this.x+3*this.width/5,this.y+3*this.height/5,this.width/5,this.height/5);
             
         }

@@ -12,6 +12,7 @@ create table user (
 create table game (
     gm_id int not null auto_increment,
     gm_turn int not null default 1,
+    gm_trumph varchar(25),
     gm_state_id int not null,
     gm_turn_timestamp TIMESTAMP,
     gm_next_user int,

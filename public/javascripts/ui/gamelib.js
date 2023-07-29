@@ -1,6 +1,7 @@
 
 let bg;
 
+
 async function refresh() {
     if (GameInfo.game.player.state == "Waiting") { 
         // Every time we are waiting
@@ -52,16 +53,15 @@ async function setup() {
     setInterval(()=> {
         fetchBoard();
         fetchMatchStatus();
+        fetchScore();
 
-    },2000)
+    },1000)
 }
 
 function draw() {
     background(bg);
-    console.log("Card Storage is loaded"+ CardStorage.isLoaded);
     if (CardStorage.isLoaded) {
         HandInfo.draw();
-        HandInfo.drawBattle();
 
     }
 

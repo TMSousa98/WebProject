@@ -11,23 +11,26 @@ class Player {
         this.name = name;
         this.state= state;
         this.order = order;
+        this.score = 0;
     }
     export() {
         let player = new Player();
         player.name = this.name;
         player.state = this.state.export();
         player.order = this.order;
+        player.score = this.score;
         return player;
     }
 }
 
 class Game {
-    constructor(id,turn,state,player,opponents) {
+    constructor(id,turn,state,player,opponents,trump) {
         this.id = id;
         this.turn = turn;
         this.state = state;
         this.player = player;
         this.opponents = opponents || [];
+        this.trump = trump;
     }
     export() {
         let game = new Game();
@@ -50,9 +53,11 @@ class Game {
             where ug_game_id=?`, [game.id]);
             for (let dbPlayer of dbPlayers) {
                 let player = new Player(dbPlayer.ug_id,dbPlayer.usr_name,
-                            new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order);
+                            new State(dbPlayer.ugst_id,dbPlayer.ugst_state),dbPlayer.ug_order,dbPlayer.gm_trumph);
 
                             player.userId = dbPlayer.ug_user_id;
+
+                            player.score = this.getScore(dbPlayer.ug_id,game);
                             //player.userId = dbPlayers.ug_user_id
                 if (dbPlayer.usr_id == userId) game.player = player;
                 else game.opponents.push(player);
@@ -76,7 +81,7 @@ class Game {
             if (dbGames.length==0)
                 return {status:200, result:false};
             let dbGame = dbGames[0];
-            let game = new Game(dbGame.gm_id,dbGame.gm_turn,new State(dbGame.gst_id,dbGame.gst_state));
+            let game = new Game(dbGame.gm_id,dbGame.gm_turn,new State(dbGame.gst_id,dbGame.gst_state),dbGame.gm_trumph);
             let result = await this.fillPlayersOfGame(id,game);
             if (result.status != 200) {
                 return result;
@@ -97,7 +102,7 @@ class Game {
                     where gst_state = 'Waiting'`);
             let games = [];
             for (let dbGame of dbGames) {
-                let game = new Game(dbGame.gm_id,dbGame.gm_turn,new State(dbGame.gst_id,dbGame.gst_state));
+                let game = new Game(dbGame.gm_id,dbGame.gm_turn,new State(dbGame.gst_id,dbGame.gst_state),dbGame.gm_trumph);
                 let result = await this.fillPlayersOfGame(userId,game);
                 if (result.status != 200) {
                     return result;
@@ -181,6 +186,23 @@ class Game {
             console.log(err);
             return { status: 500, result: err };
         }
+    }
+
+    static async getScore(userId,game) {
+        let s = await pool.query("SELECT * FROM scoreboard WHERE sb_user_game_id = ?",[userId]);
+        if (s[0] == undefined) {
+            return 0;
+        }
+            
+        if (s[0][0] == undefined) {
+            return 0;
+        }
+        
+        if (s[0][0].sb_points == undefined) {
+            return 0;
+
+        }
+        return s[0][0].sb_points
     }
 
 }
